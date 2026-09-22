@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Rohith Fitness centre</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="brand">
+      🏋️ <span>Rohith Fitness centre</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li><a href="chatbot.html" class="nav-link">AI Chatbot</a></li>
+      <li><a href="workout.html" class="nav-link">Workout</a></li>
+      <li><a href="nutrition.html" class="nav-link">Nutrition</a></li>
+      <li><a href="progress.html" class="nav-link">Progress</a></li>
+    </ul>
+    <div id="navUserBadge" class="user-badge"></div>
+  </nav>
+
+  <div class="container">
+    
+    <!-- User Welcome Header -->
+    <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.1)); border-color: rgba(16, 185, 129, 0.3);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1 id="welcomeUser" class="page-title">Welcome back! 👋</h1>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Here is your overall fitness summary and active quick links.</p>
+        </div>
+        <div>
+          <a href="workout.html" class="btn btn-primary">+ Generate New Workout</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-4" style="margin-bottom: 2rem;">
+      <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">LATEST WEIGHT</div>
+        <div id="dashLatestWeight" style="font-size: 1.8rem; font-weight: 800; color: var(--accent-neon); margin: 0.5rem 0;">-- kg</div>
+        <a href="progress.html" style="font-size: 0.8rem; color: var(--accent-secondary); text-decoration: none;">View progress log →</a>
+      </div>
+
+      <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">ACTIVE PLAN</div>
+        <div id="dashActivePlan" style="font-size: 1.2rem; font-weight: 700; margin: 0.5rem 0; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">Hypertrophy Plan</div>
+        <a href="workout.html" style="font-size: 0.8rem; color: var(--accent-secondary); text-decoration: none;">View workout details →</a>
+      </div>
+
+      <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">DAILY WATER TARGET</div>
+        <div style="font-size: 1.8rem; font-weight: 800; color: #38bdf8; margin: 0.5rem 0;">3.0 L</div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Optimal recovery goal</span>
+      </div>
+
+      <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">AI FITNESS ASSISTANT</div>
+        <div style="font-size: 1.2rem; font-weight: 700; color: var(--accent-neon); margin: 0.5rem 0;">FitBot Online 🤖</div>
+        <a href="chatbot.html" onclick="if(window.FloatingChat){FloatingChat.toggleOpen();return false;}" style="font-size: 0.8rem; color: var(--accent-secondary); text-decoration: none; cursor: pointer;">Ask AI in Right Corner →</a>
+      </div>
+    </div>
+
+    <!-- Main Navigation Tiles -->
+    <h2 style="font-size: 1.4rem; margin-bottom: 1.25rem;">Explore Feature Modules</h2>
+    
+    <div class="grid grid-2" style="margin-bottom: 2.5rem;">
+      
+      <div class="card" style="display: flex; gap: 1.25rem; align-items: flex-start;">
+        <div style="font-size: 3rem; background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: var(--radius-md);">🤖</div>
+        <div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">AI Chatbot (FitBot)</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5;">
+            Get instant answers on exercise form, nutrition advice, camera meal scans, and voice-assisted fitness guidance.
+          </p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button onclick="FloatingChat.toggleOpen()" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Open Floating Chat</button>
+            <a href="chatbot.html" class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Full Screen View</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="display: flex; gap: 1.25rem; align-items: flex-start;">
+        <div style="font-size: 3rem; background: rgba(6, 182, 212, 0.1); padding: 1rem; border-radius: var(--radius-md);">🏋️</div>
+        <div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Workout Routine Generator</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5;">
+            Generate tailored routines for Muscle Gain, Fat Loss, or General Endurance.
+          </p>
+          <a href="workout.html" class="btn btn-outline" style="font-size: 0.85rem;">Build Workout Routine</a>
+        </div>
+      </div>
+
+      <div class="card" style="display: flex; gap: 1.25rem; align-items: flex-start;">
+        <div style="font-size: 3rem; background: rgba(234, 179, 8, 0.1); padding: 1rem; border-radius: var(--radius-md);">🍎</div>
+        <div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Nutrition & Calorie Guidance</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5;">
+            Discover protein targets, healthy meal suggestions, and macro breakdowns.
+          </p>
+          <a href="nutrition.html" class="btn btn-outline" style="font-size: 0.85rem;">Nutrition Recommendations</a>
+        </div>
+      </div>
+
+      <div class="card" style="display: flex; gap: 1.25rem; align-items: flex-start;">
+        <div style="font-size: 3rem; background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: var(--radius-md);">📊</div>
+        <div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Progress & History Tracker</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5;">
+            Log your body weight logs, maintain workout records, and monitor body composition change over time.
+          </p>
+          <a href="progress.html" class="btn btn-outline" style="font-size: 0.85rem;">View Weight History</a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <footer>
+    <p>© 2026 AI Fitness Assistant. Built with Python Flask, SQLite & Google Gemini AI.</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = Auth.getUser();
+      const welcomeEl = document.getElementById('welcomeUser');
+      if (welcomeEl && user) {
+        welcomeEl.innerText = `Welcome back, ${user.username}! 👋`;
+      }
+
+      // Fetch Latest Weight
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/progress?user_id=${user.id}`);
+        const data = await res.json();
+        if (data.success && data.records && data.records.length > 0) {
+          const latest = data.records[0];
+          document.getElementById('dashLatestWeight').innerText = `${latest.weight} kg`;
+        }
+      } catch(e) {}
+
+      // Fetch Latest Workout
+      try {
+        const wRes = await fetch(`${API_BASE_URL}/api/workouts?user_id=${user.id}`);
+        const wData = await wRes.json();
+        if (wData.success && wData.workouts && wData.workouts.length > 0) {
+          const latestW = wData.workouts[0];
+          document.getElementById('dashActivePlan').innerText = latestW.title;
+        }
+      } catch(e) {}
+    });
+  </script>
+</body>
+</html>

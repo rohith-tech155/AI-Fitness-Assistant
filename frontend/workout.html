@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workout Generator - Rohith Fitness centre</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="brand">
+      🏋️ <span>Rohith Fitness centre</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li><a href="chatbot.html" class="nav-link">AI Chatbot</a></li>
+      <li><a href="workout.html" class="nav-link">Workout</a></li>
+      <li><a href="nutrition.html" class="nav-link">Nutrition</a></li>
+      <li><a href="progress.html" class="nav-link">Progress</a></li>
+    </ul>
+    <div id="navUserBadge" class="user-badge"></div>
+  </nav>
+
+  <div class="container">
+    
+    <div style="margin-bottom: 2rem;">
+      <h1 class="page-title">🏋️ AI Workout Routine Generator</h1>
+      <p class="page-subtitle">Configure your preferences below to generate a tailored workout plan.</p>
+    </div>
+
+    <div class="grid grid-2" style="align-items: start; margin-bottom: 2.5rem;">
+      
+      <!-- Generator Configuration Form -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; margin-bottom: 1.25rem;">Select Workout Parameters</h2>
+        
+        <form id="workoutForm" onsubmit="handleGenerateWorkout(event)">
+          
+          <div class="form-group">
+            <label for="workoutGoal">Primary Fitness Goal</label>
+            <select id="workoutGoal" class="form-control">
+              <option value="Muscle Gain">💪 Muscle Building (Hypertrophy)</option>
+              <option value="Fat Loss">🔥 Fat Loss & Toning</option>
+              <option value="Endurance">🏃 Endurance & Stamina</option>
+              <option value="Flexibility">🧘 Flexibility & Mobility</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="workoutLevel">Fitness Level</label>
+            <select id="workoutLevel" class="form-control">
+              <option value="Beginner">🌱 Beginner (0 - 6 months experience)</option>
+              <option value="Intermediate" selected>⚡ Intermediate (6 months - 2 years)</option>
+              <option value="Advanced">🔥 Advanced (2+ years experience)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="workoutEquipment">Available Equipment</label>
+            <select id="workoutEquipment" class="form-control">
+              <option value="Gym Equipment">🏋️ Full Gym (Barbells, Dumbbells, Cables, Machines)</option>
+              <option value="Dumbbells Only">🧱 Dumbbells & Bench Only</option>
+              <option value="Bodyweight">🤸 Bodyweight / Home Workout</option>
+            </select>
+          </div>
+
+          <button type="submit" id="generateBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+            Generate Workout Plan 🚀
+          </button>
+        </form>
+      </div>
+
+      <!-- Overview Info Box -->
+      <div class="card" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);">
+        <h3 style="font-size: 1.1rem; color: var(--accent-neon); margin-bottom: 0.75rem;">💡 How It Works</h3>
+        <ul style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; padding-left: 1.25rem;">
+          <li>Our AI engine constructs a multi-day training split based on your selected target.</li>
+          <li>Each exercise includes precise recommended sets, rep ranges, and rest intervals.</li>
+          <li>Generated workout routines are automatically saved to your history for quick reference.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Output Routine Area -->
+    <div id="workoutOutput" style="display: none;">
+      <div class="card" style="margin-bottom: 2rem; border-color: var(--accent-primary);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <h2 id="planTitle" style="font-size: 1.6rem; font-weight: 800; color: var(--accent-neon);">Workout Plan</h2>
+            <p id="planOverview" style="color: var(--text-muted); font-size: 0.95rem;"></p>
+          </div>
+          <button class="btn btn-outline" onclick="window.print()">🖨️ Print Plan</button>
+        </div>
+
+        <div id="daysContainer" class="grid grid-2" style="margin-bottom: 1.5rem;"></div>
+
+        <!-- Tips Section -->
+        <div id="tipsBox" style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--bg-card-border); border-radius: var(--radius-sm); padding: 1.25rem;">
+          <h4 style="color: var(--accent-neon); margin-bottom: 0.5rem;">🎯 Key Training Tips</h4>
+          <ul id="tipsList" style="padding-left: 1.25rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;"></ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>© 2026 Rohith Fitness centre. Built with Python Flask, SQLite & Google AI studio.</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    async function handleGenerateWorkout(e) {
+      e.preventDefault();
+      const goal = document.getElementById('workoutGoal').value;
+      const level = document.getElementById('workoutLevel').value;
+      const generateBtn = document.getElementById('generateBtn');
+      const user = Auth.getUser();
+
+      generateBtn.innerText = 'Generating Plan... ⏳';
+      generateBtn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/workout/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ goal, level, user_id: user.id })
+        });
+        const data = await res.json();
+
+        if (data.success && data.routine) {
+          renderWorkoutRoutine(data.routine);
+          showToast('Workout plan generated & saved successfully!', 'success');
+        } else {
+          showToast('Failed to generate plan. Please try again.', 'error');
+        }
+      } catch (err) {
+        showToast('Running offline. Displaying template plan.', 'info');
+      } finally {
+        generateBtn.innerText = 'Generate Workout Plan 🚀';
+        generateBtn.disabled = false;
+      }
+    }
+
+    function renderWorkoutRoutine(routine) {
+      const outputDiv = document.getElementById('workoutOutput');
+      const titleEl = document.getElementById('planTitle');
+      const overviewEl = document.getElementById('planOverview');
+      const daysContainer = document.getElementById('daysContainer');
+      const tipsList = document.getElementById('tipsList');
+
+      titleEl.innerText = routine.title || 'Custom Workout Plan';
+      overviewEl.innerText = routine.overview || '';
+      daysContainer.innerHTML = '';
+      tipsList.innerHTML = '';
+
+      if (routine.days && routine.days.length > 0) {
+        routine.days.forEach(day => {
+          const dayCard = document.createElement('div');
+          dayCard.className = 'card';
+          dayCard.style.background = 'rgba(15, 23, 42, 0.6)';
+
+          let exercisesHtml = '';
+          if (day.exercises) {
+            exercisesHtml = day.exercises.map(ex => `
+              <div style="padding: 0.6rem 0; border-bottom: 1px solid var(--bg-card-border); display: flex; justify-content: space-between; font-size: 0.9rem;">
+                <div><strong>${escapeHtml(ex.name)}</strong></div>
+                <div style="color: var(--accent-neon);">${escapeHtml(ex.sets)} sets × ${escapeHtml(ex.reps)}</div>
+              </div>
+            `).join('');
+          }
+
+          dayCard.innerHTML = `
+            <h3 style="font-size: 1.15rem; color: #38bdf8; margin-bottom: 0.85rem;">${escapeHtml(day.day)}</h3>
+            <div>${exercisesHtml}</div>
+          `;
+          daysContainer.appendChild(dayCard);
+        });
+      }
+
+      if (routine.tips && routine.tips.length > 0) {
+        tipsList.innerHTML = routine.tips.map(t => `<li>${escapeHtml(t)}</li>`).join('');
+      } else {
+        tipsList.innerHTML = '<li>Stay consistent and track your weight progression weekly.</li>';
+      }
+
+      outputDiv.style.display = 'block';
+      outputDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

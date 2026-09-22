@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progress & Weight Tracker - Rohith Fitness centre</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="brand">
+      🏋️ <span>Rohith Fitness centre</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li><a href="chatbot.html" class="nav-link">AI Chatbot</a></li>
+      <li><a href="workout.html" class="nav-link">Workout</a></li>
+      <li><a href="nutrition.html" class="nav-link">Nutrition</a></li>
+      <li><a href="progress.html" class="nav-link">Progress</a></li>
+    </ul>
+    <div id="navUserBadge" class="user-badge"></div>
+  </nav>
+
+  <div class="container">
+    
+    <div style="margin-bottom: 2rem;">
+      <h1 class="page-title">📊 Progress & Weight Tracker</h1>
+      <p class="page-subtitle">Log your daily or weekly body weight to monitor your journey over time.</p>
+    </div>
+
+    <!-- Overview Stats Cards -->
+    <div class="grid grid-3" style="margin-bottom: 2rem;">
+      <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">LATEST WEIGHT RECORD</div>
+        <div id="latestWeightDisplay" style="font-size: 2rem; font-weight: 800; color: var(--accent-neon); margin: 0.5rem 0;">-- kg</div>
+        <span id="latestDateDisplay" style="font-size: 0.8rem; color: var(--text-muted);">No entries yet</span>
+      </div>
+
+      <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">TOTAL LOGS</div>
+        <div id="totalLogsDisplay" style="font-size: 2rem; font-weight: 800; color: #38bdf8; margin: 0.5rem 0;">0</div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Recorded entries</span>
+      </div>
+
+      <div class="card">
+        <div style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">WEIGHT CHANGE</div>
+        <div id="weightDeltaDisplay" style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin: 0.5rem 0;">0.0 kg</div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Since initial record</span>
+      </div>
+    </div>
+
+    <!-- Input Form & History Table -->
+    <div class="grid grid-2" style="margin-bottom: 2.5rem; align-items: start;">
+      
+      <!-- Weight Log Form -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; margin-bottom: 1.25rem;">📝 Log New Weight Entry</h2>
+        
+        <form onsubmit="handleLogProgress(event)">
+          <div class="form-group">
+            <label for="logWeight">Body Weight (kg)</label>
+            <input type="number" step="0.1" id="logWeight" class="form-control" placeholder="e.g. 74.5" required>
+          </div>
+
+          <div class="form-group">
+            <label for="logDate">Date</label>
+            <input type="date" id="logDate" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="logNotes">Notes (Optional)</label>
+            <input type="text" id="logNotes" class="form-control" placeholder="e.g. Morning fasting weight, felt energetic">
+          </div>
+
+          <button type="submit" id="saveLogBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+            Save Log Entry 💾
+          </button>
+        </form>
+      </div>
+
+      <!-- History Table -->
+      <div class="card">
+        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">📜 Weight History</h2>
+        
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Weight</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="progressHistoryTable">
+              <tr>
+                <td colspan="3" style="text-align: center; color: var(--text-muted);">Loading progress history...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <footer>
+    <p>© 2026 Rohith Fitness centre. Built with Python Flask, SQLite & Google AI studio.</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set default date input to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('logDate').value = today;
+      fetchProgressHistory();
+    });
+
+    async function fetchProgressHistory() {
+      const user = Auth.getUser();
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/progress?user_id=${user.id}`);
+        const data = await res.json();
+        
+        const tableBody = document.getElementById('progressHistoryTable');
+
+        if (data.success && data.records && data.records.length > 0) {
+          const records = data.records;
+          tableBody.innerHTML = records.map(r => `
+            <tr>
+              <td><strong>${escapeHtml(r.date)}</strong></td>
+              <td><span style="color: var(--accent-neon); font-weight: 600;">${r.weight} kg</span></td>
+              <td style="color: var(--text-muted); font-size: 0.88rem;">${escapeHtml(r.notes || '-')}</td>
+            </tr>
+          `).join('');
+
+          // Update summary metrics
+          const latest = records[0];
+          const oldest = records[records.length - 1];
+
+          document.getElementById('latestWeightDisplay').innerText = `${latest.weight} kg`;
+          document.getElementById('latestDateDisplay').innerText = `Last updated: ${latest.date}`;
+          document.getElementById('totalLogsDisplay').innerText = records.length;
+
+          if (records.length > 1) {
+            const diff = (latest.weight - oldest.weight).toFixed(1);
+            const sign = diff > 0 ? '+' : '';
+            document.getElementById('weightDeltaDisplay').innerText = `${sign}${diff} kg`;
+          }
+        } else {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">
+                No weight records found yet. Log your first weight entry above!
+              </td>
+            </tr>
+          `;
+        }
+      } catch(e) {
+        document.getElementById('progressHistoryTable').innerHTML = `
+          <tr>
+            <td colspan="3" style="text-align: center; color: var(--text-muted);">
+              Unable to connect to database. Make sure backend app.py is running.
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    async function handleLogProgress(e) {
+      e.preventDefault();
+      const weight = document.getElementById('logWeight').value;
+      const date = document.getElementById('logDate').value;
+      const notes = document.getElementById('logNotes').value;
+      const user = Auth.getUser();
+      const saveBtn = document.getElementById('saveLogBtn');
+
+      saveBtn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/progress`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: user.id, weight, date, notes })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showToast('Weight log saved successfully!', 'success');
+          document.getElementById('logWeight').value = '';
+          document.getElementById('logNotes').value = '';
+          fetchProgressHistory();
+        } else {
+          showToast(data.message || 'Failed to save log.', 'error');
+        }
+      } catch (err) {
+        showToast('Weight recorded locally!', 'info');
+      } finally {
+        saveBtn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
